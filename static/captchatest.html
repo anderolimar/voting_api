@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CAPTCHA Example</title>
+</head>
+<body>
+    <h1>CAPTCHA Example</h1>
+    <img src="" alt="CAPTCHA" id="captchaImg">
+    <form action="/validate" method="post">
+        <label for="captchaInput">Enter the CAPTCHA:</label>
+        <input type="hidden" id="captchaID" name="captchaID" required>
+        <input type="text" id="captchaInput" name="captchaInput" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function reloadCaptcha() {
+            fetch('/captcha')
+                .then(response => response.json())
+                .then(data => {
+                    //document.getElementById('captchaImg').src = 'data:image/png;base64,' + data.base64Img;
+                    console.log(data);
+                    document.getElementById('captchaImg').src = data.base64Img;
+                    document.getElementById('captchaID').value = data.captchaID;
+                });
+        }
+
+        window.onload = function() {
+            reloadCaptcha(); 
+        }
+    </script>
+</body>
+</html>
