@@ -1,16 +1,20 @@
 package bootstrap
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/dig"
 )
 
 var container *dig.Container
 var redisCli *redis.Client
+var mongoCli *mongo.Client
 
 func GetContainer() *dig.Container {
 	if container == nil {
@@ -20,8 +24,6 @@ func GetContainer() *dig.Container {
 }
 
 func Start() {
-	_ = GetContainer().Provide(func() zerolog.Logger { return zerolog.New(nil).With().Timestamp().Logger() })
-
 	_ = GetContainer().Provide(func() *redis.Client {
 		redisHost := os.Getenv("REDIS_HOST")
 		if redisCli == nil && redisHost != "" {
@@ -30,6 +32,21 @@ func Start() {
 				Addr: fmt.Sprintf("%s:%s", redisHost, redisPort),
 			})
 			return redisCli
+		}
+
+		return nil
+	})
+
+	_ = GetContainer().Provide(func() *mongo.Client {
+		mongoUrl := os.Getenv("MONGO_URL")
+		if mongoCli == nil && mongoUrl != "" {
+			clientOptions := options.Client().ApplyURI(mongoUrl)
+			var err error
+			mongoCli, err = mongo.Connect(context.Background(), clientOptions)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return mongoCli
 		}
 
 		return nil

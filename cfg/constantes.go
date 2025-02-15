@@ -1,0 +1,3 @@
+package cfg
+
+var VOTING_CHANNEL = "VOTING_CHANNEL"

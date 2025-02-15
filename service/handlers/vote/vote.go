@@ -1,22 +1,13 @@
 package vote
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
-	"votingapi/clients/captcha"
 	"votingapi/service/handlers/commom"
+	"votingapi/service/services"
 )
-
-func RegisterRoutes(router *http.ServeMux) {
-
-}
-
-type VoteRequest struct {
-	CaptchaID    string `json:"captchaID"`
-	CaptchaInput string `json:"captchaInput"`
-	Vote         string `json:"vote"`
-}
 
 func NewVoteHandler() *VoteHandler {
 	return &VoteHandler{}
@@ -24,7 +15,7 @@ func NewVoteHandler() *VoteHandler {
 
 type VoteHandler struct {
 	commom.CommonsHandler
-	captchaClient captcha.CaptchaClient
+	service services.VoteService
 }
 
 func (v VoteHandler) RegisterRoutes(router *http.ServeMux) {
@@ -32,29 +23,14 @@ func (v VoteHandler) RegisterRoutes(router *http.ServeMux) {
 }
 
 func (v VoteHandler) Vote(w http.ResponseWriter, r *http.Request) {
-
 	decoder := json.NewDecoder(r.Body)
-	var param VoteRequest
+	var param services.VoteRequest
 	err := decoder.Decode(&param)
 	if err != nil {
 		log.Println(err)
 	}
 	defer r.Body.Close()
 
-	var body map[string]interface{}
-
-	if len(param.CaptchaInput) == 0 {
-		http.Error(w, "CAPTCHA answer is required", http.StatusBadRequest)
-		body = map[string]interface{}{"code": -1, "msg": "CAPTCHA answer is required"}
-		v.SendJson(w, body, http.StatusBadRequest)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	if v.captchaClient.ValidateCaptcha(param.CaptchaID, param.CaptchaInput) {
-		body = map[string]interface{}{"code": 0, "msg": "success", "votes": 0}
-	} else {
-		body = map[string]interface{}{"code": -2, "msg": "Invalid CAPTCHA answer"}
-	}
-	v.SendJson(w, body, http.StatusOK)
+	response := v.service.Vote(context.Background(), param)
+	v.SendJson(w, response, response.HttpStatusCode)
 }

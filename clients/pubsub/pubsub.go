@@ -11,7 +11,7 @@ type PubSubChannel struct {
 	Disconected bool
 }
 
-type PubSubService interface {
+type PubSubClient interface {
 	Subscribe(ctx context.Context, channel string) ChannelContainer
 	Publish(ctx context.Context, channel string, message *PubSubMessage) error
 }

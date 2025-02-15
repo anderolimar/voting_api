@@ -8,7 +8,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-func NewPubSubClient() PubSubService {
+func NewPubSubClient() PubSubClient {
 	var client *redis.Client
 
 	err := bootstrap.GetContainer().Invoke(func(c *redis.Client) { client = c })
