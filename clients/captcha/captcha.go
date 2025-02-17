@@ -4,6 +4,7 @@ import "github.com/mojocn/base64Captcha"
 
 var _captcha *base64Captcha.Captcha
 
+//go:generate mockgen -source=./catcha.go -destination=./../../mocks/mock_catcha.go -typed
 type CaptchaClient interface {
 	GenerateCaptcha() (captchaID string, base64Image string, err error)
 	ValidateCaptcha(captchaID string, captchaValue string) (match bool)

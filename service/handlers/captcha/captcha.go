@@ -1,32 +1,27 @@
 package captcha
 
 import (
-	"encoding/json"
 	"net/http"
-	"votingapi/clients/captcha"
 	"votingapi/service/handlers/commom"
+	"votingapi/service/services/captcha"
 )
 
 func NewVoteHandler() *CaptchaHandler {
-	return &CaptchaHandler{}
+	return &CaptchaHandler{
+		captchaService: captcha.NewCatpchaService(),
+	}
 }
 
 type CaptchaHandler struct {
 	commom.CommonsHandler
-	captchaClient captcha.CaptchaClient
+	captchaService captcha.CaptchaService
 }
 
 func (c CaptchaHandler) RegisterRoutes(router *http.ServeMux) {
-	http.HandleFunc("GET /captcha", c.Captcha)
+	router.HandleFunc("GET /captcha", c.Captcha)
 }
 
 func (c CaptchaHandler) Captcha(w http.ResponseWriter, r *http.Request) {
-	id, cap, err := c.captchaClient.GenerateCaptcha()
-
-	body := map[string]interface{}{"captchaID": id, "base64Img": cap}
-	if err != nil {
-		body = map[string]interface{}{"code": 0, "msg": err.Error()}
-	}
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	json.NewEncoder(w).Encode(body)
+	resp := c.captchaService.GenerateCaptcha()
+	c.SendJson(w, resp, resp.HttpStatusCode)
 }

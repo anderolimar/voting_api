@@ -34,20 +34,35 @@
         #results {
             margin-top: 30px;
         }
+
+        .sel {
+            background: #818181;
+            color: #fff;
+        }
+
+        .alert {
+            color: #d90000;
+            font-size: 20px;
+            background: #cdcdcd;
+            padding: 10px;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
-    <div class="box">
-        <h1>Escolha quem voçê quer eliminar nesse paredão?</h1>
+    <div class="box" id="box">
+        <h1 id="poll_title"></h1>
         <form id="votingForm" onsubmit="sendvote();return false;">
             <div class="options">
-                <button type="button" onclick="onvote('opcao1');" name="option" value="opcao1">Opção 1</button>
-                <button type="button" onclick="onvote('opcao2');" name="option" value="opcao2">Opção 2</button>
+                <div id="options">
+                    <!-- <button type="button" onclick="onvote('opcao1');" name="option" value="opcao1">Opção 1</button>
+                    <button type="button" onclick="onvote('opcao2');" name="option" value="opcao2">Opção 2</button> -->
+                </div>
 
                 <img src="" alt="CAPTCHA" id="captchaImg">
 
-                <label for="captchaInput">Enter the CAPTCHA:</label>
+                <label for="captchaInput">Digite os numeros acima:</label>
                 <input type="hidden" id="vote" name="vote" required>
                 <input type="hidden" id="captchaID" name="captchaID" required>
                 <input type="text" id="captchaInput" name="captchaInput" required>
@@ -57,78 +72,17 @@
                 <!-- Adicione mais botões conforme necessário -->
             </div>
         </form>
+        <div><p class="alert" id="alert">Captcha Invalido !</p></div>
     </div>
-    <!--     
-    <div id="results" style="display: none;">
+    
+    <div class="box" id="results" style="display: none;">
         <h2>Resultados Parciais</h2>
-        <p>Votos para Opção 1: <span id="resultOpcao1">0</span></p>
-        <p>Votos para Opção 2: <span id="resultOpcao2">0</span></p>
-    </div> -->
+        <!-- <p>Votos para Opção 1: <span id="resultOpcao1">0</span></p>
+        <p>Votos para Opção 2: <span id="resultOpcao2">0</span></p> -->
+    </div>
 
-    <script>
-        // let votes = {
-        //     opcao1: 0,
-        //     opcao2: 0
-        // };
+    <script src="main.js"></script>
 
-        let voteOption = "";
-
-
-        function loadCaptcha() {
-            fetch('/captcha')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('captchaImg').src = data.base64Img;
-                    document.getElementById('captchaID').value = data.captchaID;
-                });
-        }
-
-        function onvote(option) {
-            voteOption = option
-        }
-
-        async function sendvote() {
-
-            let captchaID = document.getElementById('captchaID').value;
-            let captchaInput = document.getElementById('captchaInput').value;
-
-            const rawResponse = await fetch('/vote', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ captchaID: captchaID, captchaInput: captchaInput, vote: voteOption })
-            });
-            const content = await rawResponse.json();
-
-            console.log(content);
-        }
-
-        window.onload = function () {
-            loadCaptcha();
-
-
-            let val = document.getElementById("votingForm");
-            votingForm.onkeypress = function (key) {
-                let btn = 0 || key.keyCode || key.charCode;
-                if (btn == 13) {
-                    // alert("Enter Key is Pressed!");
-                    key.preventDefault();
-                    return false;
-                }
-                
-            }
-        }
-
-        // function updateResults() {
-        //     document.getElementById('resultOpcao1').innerText = votes.opcao1;
-        //     document.getElementById('resultOpcao2').innerText = votes.opcao2;
-        //     if (votes.opcao1 + votes.opcao2 > 0) {
-        //         document.getElementById('results').style.display = 'block';
-        //     }
-        // }
-    </script>
 </body>
 
 </html>

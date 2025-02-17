@@ -3,15 +3,20 @@ package handlers
 import (
 	"net/http"
 	"votingapi/service/handlers/captcha"
-	"votingapi/service/handlers/vote"
+	vote "votingapi/service/handlers/poll"
 )
 
-var voteHandler = vote.NewVoteHandler()
-var captchaHandler = captcha.NewVoteHandler()
+var pollHandler *vote.PollHandler
+var captchaHandler *captcha.CaptchaHandler
 
 func RegisterRoutes(router *http.ServeMux) {
-	router.Handle("GET /", http.FileServer(http.Dir("../static")))
+
+	pollHandler = vote.NewPollHandler()
+
+	captchaHandler = captcha.NewVoteHandler()
+
+	router.Handle("/", http.FileServer(http.Dir("./service/static")))
 	captchaHandler.RegisterRoutes(router)
-	voteHandler.RegisterRoutes(router)
+	pollHandler.RegisterRoutes(router)
 
 }

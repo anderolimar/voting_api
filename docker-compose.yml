@@ -1,17 +1,31 @@
-version: '3'
 
 services:
-  api:
-    build: .
-    image : voting-api
+  service:
+    build:
+      context: .
+      dockerfile: ./DockerfileService
+    image : voting-service
     ports:
       - "8080:8080"
     environment:
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
+      MONGO_URL: "mongodb://root:root@mongodb:27017"
       PORT: "8080"
     depends_on:
-      - redisserver   
+      - redis   
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./DockerfileWorker
+    image : voting-worker
+    environment:
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      MONGO_URL: "mongodb://root:root@mongodb:27017"
+    depends_on:
+      - redis         
 
   redis:
     image: redis:latest
@@ -22,6 +36,9 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
     ports:
       - "27017:27017"
     volumes:

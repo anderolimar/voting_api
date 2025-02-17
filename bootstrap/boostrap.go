@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/dig"
@@ -24,21 +25,28 @@ func GetContainer() *dig.Container {
 }
 
 func Start() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Default().Printf("Error loading .env file: %s\n", err)
+	}
+
 	_ = GetContainer().Provide(func() *redis.Client {
 		redisHost := os.Getenv("REDIS_HOST")
+		fmt.Println("redisHost : " + redisHost)
 		if redisCli == nil && redisHost != "" {
 			redisPort := os.Getenv("REDIS_PORT")
 			redisCli = redis.NewClient(&redis.Options{
 				Addr: fmt.Sprintf("%s:%s", redisHost, redisPort),
 			})
-			return redisCli
+
 		}
 
-		return nil
+		return redisCli
 	})
 
 	_ = GetContainer().Provide(func() *mongo.Client {
 		mongoUrl := os.Getenv("MONGO_URL")
+		fmt.Println("mongoUrl : " + mongoUrl)
 		if mongoCli == nil && mongoUrl != "" {
 			clientOptions := options.Client().ApplyURI(mongoUrl)
 			var err error
@@ -46,9 +54,9 @@ func Start() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			return mongoCli
+
 		}
 
-		return nil
+		return mongoCli
 	})
 }

@@ -8,7 +8,7 @@ import (
 type CommonsHandler struct{}
 
 func (c CommonsHandler) SendJson(w http.ResponseWriter, body interface{}, status int) {
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(body)
 }
