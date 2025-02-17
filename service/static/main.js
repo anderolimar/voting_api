@@ -21,20 +21,19 @@ function loadPool() {
             for (opt of data.poll.options) {
                 var div = document.createElement("div");
                 div.innerHTML = `<button type="button" onclick="onvote(${opt.index});" name="option" id="opt_${opt.index}" value="${opt.index}">${opt.title}</button>`
-                //const newOpt = document.createElement(`<button type="button" onclick="onvote(${opt.index});" name="option" value="${opt.index}">Opção 1</button>`);
                 document.getElementById('options').appendChild(div)
             }
         });
 }
 
 function loadParcialPool() {
+    var total = currentPoll.poll.options.reduce((a, o) => a + o.quantity, 0)
     document.getElementById('box').style.display = "none"
     document.getElementById('results').style.display = "block"
 
     for (opt of currentPoll.poll.options) {
         var div = document.createElement("div");
-        div.innerHTML = ` <p>Votos para ${opt.title}: <span>${opt.quantity}</span></p>`
-        //const newOpt = document.createElement(`<button type="button" onclick="onvote(${opt.index});" name="option" value="${opt.index}">Opção 1</button>`);
+        div.innerHTML = ` <p>${opt.title}  <span>${(opt.quantity/total * 100).toFixed(2)} % </span></p>`
         document.getElementById('results').appendChild(div)
     }
 
@@ -49,6 +48,11 @@ function onvote(option) {
 }
 
 async function sendvote() {
+    if(voteOption == "") {
+        openModal();
+        return
+    }
+
     let captchaID = document.getElementById('captchaID').value;
     let captchaInput = document.getElementById('captchaInput').value;
 
@@ -62,7 +66,6 @@ async function sendvote() {
     });
     const content = await rawResponse.json();
 
-    //console.dir(content);
     if (content.code == "INVALID_CAPTCHA") {
         document.getElementById('alert').style.display = "block";
         loadCaptcha();
@@ -71,6 +74,14 @@ async function sendvote() {
 
     currentPoll = content
     loadParcialPool();
+}
+
+function openModal() {
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
 }
 
 window.onload = function () {

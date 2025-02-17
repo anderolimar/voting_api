@@ -22,7 +22,7 @@ type captchaService struct {
 func (c captchaService) GenerateCaptcha() *models.CaptchaResponse {
 	id, base64Image, err := c.captchaClient.GenerateCaptcha()
 	if err != nil {
-		return &models.CaptchaResponse{Response: models.InvalidBodyErrorReponse}
+		return &models.CaptchaResponse{Response: models.InternalServerErrorReponse}
 	}
 
 	return &models.CaptchaResponse{
