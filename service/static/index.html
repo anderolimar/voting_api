@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votação</title>
+    <style>
+        html {
+            background: rgb(175, 175, 175);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            height: 100%;
+
+        }
+
+        img {
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
+            margin-top: 20px;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 350px;
+            margin: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
+        }
+
+        .box h1, .box h2  {
+            background: rgb(0 81 98 / 32%);
+            padding: 10px;
+            border-radius: 15px;
+            color: #ffffff;
+            text-shadow: 2px 2px #746b6bed;
+            font-size: 30px;
+        }
+
+        .sel {
+            background: #0a232a !important;
+            color: #fff;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .options button {
+            margin-top: 10px;
+            padding: 20px 80px;
+            border: none;
+            /* background: #146781; */
+            background: rgb(155 3 3);
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .label {
+            font-size: 20px;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        #results {
+            margin-top: 30px;
+        }
+
+        #results h3 {
+            /* background: #00667a; */
+            background: rgb(155 3 3);
+            padding: 10px;
+            color: #fff;
+        }
+
+        #results div {
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
+        }
+
+        #results div p {
+            color: #fff;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        #results div p span {
+            padding: 5px 15px;
+            /* background: #175450; */
+            background: rgb(155 3 3);
+            float: right;
+            margin: 5px;
+            border-radius: 10px;
+        }
+
+        .alert {
+            color: #d90000;
+            font-size: 20px;
+            background: #cdcdcd;
+            padding: 10px;
+            display: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #000;
+            text-align: center;
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .modal-content button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="modal">
+        <div class="modal-content">
+            <p>Selecione uma opção antes de votar</p>
+            <button onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <div class="box" id="box">
+        <h1 id="poll_title"></h1>
+        <form id="votingForm" onsubmit="sendvote();return false;">
+            <div class="options">
+                <div id="options">
+                    <!-- <button type="button" onclick="onvote('opcao1');" name="option" value="opcao1">Opção 1</button>
+                    <button type="button" onclick="onvote('opcao2');" name="option" value="opcao2">Opção 2</button> -->
+                </div>
+
+                <img src="" alt="CAPTCHA" id="captchaImg">
+
+                <label for="captchaInput" class="label">Digite os numeros acima:</label>
+                <input type="hidden" id="vote" name="vote" required>
+                <input type="hidden" id="captchaID" name="captchaID" required>
+                <input type="text" id="captchaInput" name="captchaInput" style="padding: 10px;" required>
+
+                <button type="submit">Votar</button>
+
+            </div>
+        </form>
+        <div>
+            <p class="alert" id="alert">Captcha Invalido !</p>
+        </div>
+    </div>
+
+    <div class="box" id="results" style="display: none;">
+        <h2>Voto realizado com sucesso</h2>
+        <h3>Resultado Parcial</h3>
+        <!-- <p>Votos para Opção 1: <span id="resultOpcao1">0</span></p>
+        <p>Votos para Opção 2: <span id="resultOpcao2">0</span></p> -->
+    </div>
+
+
+
+    <script src="main.js"></script>
+
+</body>
+
+</html>
