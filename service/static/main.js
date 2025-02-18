@@ -27,13 +27,13 @@ function loadPool() {
 }
 
 function loadParcialPool() {
-    var total = currentPoll.poll.options.reduce((a, o) => a + o.quantity, 0)
+    var total = currentPoll.poll.options.reduce((a, o) => a + (o.quantity || 0), 0)
     document.getElementById('box').style.display = "none"
     document.getElementById('results').style.display = "block"
 
     for (opt of currentPoll.poll.options) {
         var div = document.createElement("div");
-        div.innerHTML = ` <p>${opt.title}  <span>${(opt.quantity/total * 100).toFixed(2)} % </span></p>`
+        div.innerHTML = ` <p>${opt.title}  <span>${((opt.quantity || 0)/total * 100).toFixed(2)} % </span></p>`
         document.getElementById('results').appendChild(div)
     }
 
