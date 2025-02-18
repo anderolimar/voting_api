@@ -23,17 +23,43 @@ Obtém a ultima de enquetes disponíveis.
             {
                 "index": 1,
                 "title": "Participante 1",
-                "quantity": 0
             },
             {
                 "index": 2,
                 "title": "Participante 2",
-                "quantity": 0
             }
         ]
     }
 }
 
+```
+
+#### `GET /poll/{id}`
+
+Retorna infomações de enquete a partir do id fornecidos no path da requisição.
+
+**Resposta:** JSON com status da operação.
+```json
+{
+    "statusCode": 200,
+    "totalVotes": 4,
+    "poll": {
+        "id": "67b40350a7fb90d4f7234dab",
+        "title": "Escolha quem voçê quer eliminar nesse paredão?",
+        "options": [
+            {
+                "index": 1,
+                "title": "Participante 1",
+                "quantity": 1
+            },
+            {
+                "index": 2,
+                "title": "Participante 2",
+                "quantity": 2
+            }
+        ]
+    }
+}
 ```
 
 #### `POST /poll`

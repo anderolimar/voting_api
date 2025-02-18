@@ -1,6 +1,10 @@
 package captcha
 
-import "github.com/mojocn/base64Captcha"
+import (
+	"os"
+
+	"github.com/mojocn/base64Captcha"
+)
 
 var _captcha *base64Captcha.Captcha
 
@@ -23,6 +27,10 @@ func (c captchaClient) GenerateCaptcha() (captchaID string, base64Image string, 
 }
 
 func (c captchaClient) ValidateCaptcha(captchaID string, captchaValue string) bool {
+	ignoreCaptcha := os.Getenv("IGNORE_CAPTCHA") == "true"
+	if ignoreCaptcha {
+		return true
+	}
 	return _captcha.Verify(captchaID, captchaValue, true)
 }
 

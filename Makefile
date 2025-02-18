@@ -25,3 +25,7 @@ test:
 
 setup:
 	curl --location 'http://localhost:8080/poll' --header 'Content-Type: application/json' --data '{"title": "Escolha quem voçê quer eliminar nesse paredão?", "options": [{ "index": 1, "title": "Participante 1" },{ "index": 2, "title": "Participante 2" },{ "index": 3, "title": "Participante 3" },{ "index": 4, "title": "Participante 4" }]}'
+	curl --location 'http://localhost:8081/poll' --header 'Content-Type: application/json' --data '{"title": "Escolha quem voçê quer eliminar nesse paredão?", "options": [{ "index": 1, "title": "Participante 1" },{ "index": 2, "title": "Participante 2" },{ "index": 3, "title": "Participante 3" },{ "index": 4, "title": "Participante 4" }]}'
+
+attack:
+	vegeta attack -duration=10s -rate=1000 -targets=target.conf | vegeta report

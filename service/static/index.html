@@ -6,20 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Votação</title>
     <style>
+        html {
+            background: rgb(175, 175, 175);
+        }
+
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
+            height: 100%;
+
+        }
+
+        img {
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
+            margin-top: 20px;
         }
 
         .box {
             border: 1px solid #ccc;
             padding: 20px;
-            width: 300px;
+            width: 350px;
             margin: auto;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background: rgb(2, 0, 36);
-            background: linear-gradient(0deg, rgba(2, 0, 36, 1) 0%, rgba(9, 121, 112, 1) 0%, rgba(0, 212, 255, 1) 86%);
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
+        }
+
+        .box h1, .box h2  {
+            background: rgb(0 81 98 / 32%);
+            padding: 10px;
+            border-radius: 15px;
+            color: #ffffff;
+            text-shadow: 2px 2px #746b6bed;
+            font-size: 30px;
         }
 
         .sel {
@@ -36,7 +57,8 @@
             margin-top: 10px;
             padding: 20px 80px;
             border: none;
-            background: #146781;
+            /* background: #146781; */
+            background: rgb(155 3 3);
             color: white;
             cursor: pointer;
             border-radius: 5px;
@@ -58,9 +80,16 @@
             margin-top: 30px;
         }
 
+        #results h3 {
+            /* background: #00667a; */
+            background: rgb(155 3 3);
+            padding: 10px;
+            color: #fff;
+        }
+
         #results div {
-            background: #146781;
-            background: linear-gradient(0deg, rgba(2, 0, 36, 1) 0%, rgba(9, 121, 112, 1) 0%, rgba(0, 168, 255, 0.48783263305322133) 86%);
+            background: rgb(253, 29, 29);
+            background: linear-gradient(3deg, rgba(253, 29, 29, 1) 1%, rgba(252, 176, 69, 1) 100%);
         }
 
         #results div p {
@@ -68,12 +97,15 @@
             padding: 10px;
             font-size: 18px;
             font-weight: bold;
+            text-align: left;
         }
 
         #results div p span {
             padding: 5px 15px;
-            background: #175450;
-            margin-left: 20px;
+            /* background: #175450; */
+            background: rgb(155 3 3);
+            float: right;
+            margin: 5px;
             border-radius: 10px;
         }
 
@@ -159,7 +191,8 @@
     </div>
 
     <div class="box" id="results" style="display: none;">
-        <h2>Resultado Parcial</h2>
+        <h2>Voto realizado com sucesso</h2>
+        <h3>Resultado Parcial</h3>
         <!-- <p>Votos para Opção 1: <span id="resultOpcao1">0</span></p>
         <p>Votos para Opção 2: <span id="resultOpcao2">0</span></p> -->
     </div>

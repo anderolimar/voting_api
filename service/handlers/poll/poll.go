@@ -22,9 +22,12 @@ type PollHandler struct {
 }
 
 func (v PollHandler) RegisterRoutes(router *http.ServeMux) {
+
 	router.HandleFunc("GET /poll", v.Poll)
 	router.HandleFunc("POST /poll", v.NewPoll)
 	router.HandleFunc("POST /vote", v.Vote)
+	router.HandleFunc("GET /poll/{id}", v.PollSummary)
+
 }
 
 func (v PollHandler) Poll(w http.ResponseWriter, r *http.Request) {
@@ -57,5 +60,11 @@ func (v PollHandler) Vote(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	response := v.service.Vote(context.Background(), param)
+	v.SendJson(w, response, response.HttpStatusCode)
+}
+
+func (v PollHandler) PollSummary(w http.ResponseWriter, r *http.Request) {
+	pollID := r.PathValue("id")
+	response := v.service.PollSummary(context.Background(), pollID)
 	v.SendJson(w, response, response.HttpStatusCode)
 }

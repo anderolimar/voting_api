@@ -36,13 +36,14 @@ func (p PollDoc) IncrementVote(index int) {
 
 type PollRepository interface {
 	GetPoll(ctx context.Context) (*models.Poll, error)
+	GetPollSummary(ctx context.Context, pollID string) (*models.Poll, error)
 	GetParcial(ctx context.Context, pollID string) (*models.Poll, error)
 	AddPoll(ctx context.Context, poll *models.Poll, duration time.Duration) error
 	AddVote(ctx context.Context, pollID string, voteIndex int) error
 	UpdateVote(ctx context.Context, pollID string, voteIndex int) error
 }
 
-func NewVotesRepository() PollRepository {
+func NewPollRepository() PollRepository {
 	var redisclient *redis.Client
 
 	err := bootstrap.GetContainer().Invoke(func(c *redis.Client) { redisclient = c })
@@ -87,9 +88,44 @@ func (v pollRepository) GetPoll(ctx context.Context) (*models.Poll, error) {
 	return &poll, nil
 }
 
+func (v pollRepository) GetPollSummary(ctx context.Context, pollID string) (*models.Poll, error) {
+	db := v.mongoclient.Database(cfg.MONGO_DATABASE)
+	col := db.Collection(cfg.MONGO_POLL_COLLECTION)
+
+	var pollDoc PollDoc
+
+	id, err := primitive.ObjectIDFromHex(pollID)
+	if err != nil {
+		fmt.Printf("Error to GetPollSummary: %v\n", err)
+		return nil, err
+	}
+	filter := bson.M{"id": id}
+
+	res := col.FindOne(ctx, filter, nil)
+	err = res.Err()
+	if err != nil {
+		fmt.Printf("Error to GetPollSummary: %v\n", err)
+		return nil, err
+	}
+
+	err = res.Decode(&pollDoc)
+	if err != nil {
+		fmt.Printf("Error to AddPoll: %v\n", err)
+		return nil, err
+	}
+
+	poll := models.Poll{
+		ID:      pollDoc.ID.Hex(),
+		Title:   pollDoc.Title,
+		Options: pollDoc.Options,
+	}
+
+	return &poll, nil
+}
+
 func (v pollRepository) AddPoll(ctx context.Context, poll *models.Poll, duration time.Duration) error {
 	db := v.mongoclient.Database(cfg.MONGO_DATABASE)
-	col := db.Collection(cfg.MONGO_COLLECTION)
+	col := db.Collection(cfg.MONGO_POLL_COLLECTION)
 
 	pollDoc := PollDoc{
 		ID:      primitive.NewObjectID(),
@@ -160,7 +196,7 @@ func (v pollRepository) UpdateVote(ctx context.Context, pollID string, voteIndex
 	fmt.Printf("UpdateVote : poll : %s | vote : %d", pollID, voteIndex)
 
 	db := v.mongoclient.Database(cfg.MONGO_DATABASE)
-	col := db.Collection(cfg.MONGO_COLLECTION)
+	col := db.Collection(cfg.MONGO_POLL_COLLECTION)
 
 	id, err := primitive.ObjectIDFromHex(pollID)
 	if err != nil {

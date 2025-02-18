@@ -94,6 +94,21 @@ func (mr *MockPollRepositoryMockRecorder) GetPoll(ctx interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPoll", reflect.TypeOf((*MockPollRepository)(nil).GetPoll), ctx)
 }
 
+// GetPollSummary mocks base method.
+func (m *MockPollRepository) GetPollSummary(ctx context.Context, pollID string) (*models.Poll, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPollSummary", ctx, pollID)
+	ret0, _ := ret[0].(*models.Poll)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPollSummary indicates an expected call of GetPollSummary.
+func (mr *MockPollRepositoryMockRecorder) GetPollSummary(ctx, pollID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPollSummary", reflect.TypeOf((*MockPollRepository)(nil).GetPollSummary), ctx, pollID)
+}
+
 // UpdateVote mocks base method.
 func (m *MockPollRepository) UpdateVote(ctx context.Context, pollID string, voteIndex int) error {
 	m.ctrl.T.Helper()

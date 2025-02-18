@@ -15,7 +15,7 @@ func Run(ctx context.Context) {
 	bootstrap.Start()
 
 	pubSubService := pubsub.NewPubSubClient()
-	repository := repositories.NewVotesRepository()
+	repository := repositories.NewPollRepository()
 
 	sub := pubSubService.Subscribe(ctx, cfg.VOTING_CHANNEL)
 

@@ -55,6 +55,7 @@ func TestVoteService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 
 		captchaCli := mocks.NewMockCaptchaClient(ctrl)
+		captchaCli.EXPECT().ValidateCaptcha(gomock.Any(), gomock.Any()).Return(false)
 
 		pubsubCli := mocks.NewMockPubSubClient(ctrl)
 
@@ -71,8 +72,8 @@ func TestVoteService(t *testing.T) {
 
 		resp := voteSvc.Vote(context.TODO(), voteReq)
 		assert.Equal(t, http.StatusBadRequest, resp.HttpStatusCode)
-		assert.Equal(t, "REQUIRED_CAPTCHA_INPUT", resp.Code)
-		assert.Equal(t, "CAPTCHA answer is required", resp.Message)
+		assert.Equal(t, "INVALID_CAPTCHA", resp.Code)
+		assert.Equal(t, "Invalid CAPTCHA answer", resp.Message)
 
 	})
 
@@ -132,5 +133,35 @@ func TestPollService(t *testing.T) {
 		resp := voteSvc.Poll(context.TODO())
 		assert.Equal(t, http.StatusOK, resp.HttpStatusCode)
 		assert.EqualValues(t, expectedPoll, resp.Poll)
+	})
+}
+
+func TestNewPollService(t *testing.T) {
+	t.Run("Testing NewPoll() method : success response", func(t *testing.T) {
+		expectedPoll := models.PollRequest{
+			Title: "Poll Title",
+			Options: []models.VoteOption{
+				{Index: 1, Quantity: 1},
+				{Index: 2, Quantity: 2},
+			},
+		}
+
+		ctrl := gomock.NewController(t)
+
+		captchaCli := mocks.NewMockCaptchaClient(ctrl)
+
+		pubsubCli := mocks.NewMockPubSubClient(ctrl)
+
+		repo := mocks.NewMockPollRepository(ctrl)
+		repo.EXPECT().AddPoll(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+
+		voteSvc := pollService{
+			captchaClient: captchaCli,
+			pubSubClient:  pubsubCli,
+			repo:          repo,
+		}
+
+		resp := voteSvc.NewPoll(context.TODO(), expectedPoll)
+		assert.Equal(t, http.StatusOK, resp.HttpStatusCode)
 	})
 }

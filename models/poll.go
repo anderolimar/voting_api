@@ -2,9 +2,19 @@ package models
 
 import "encoding/json"
 
+type PollSummaryRequest struct {
+	PollID string `json:"pollID"`
+}
+
 type PollResponse struct {
 	Response
-	Poll *Poll `json:"poll"`
+	Poll *Poll `json:"poll,omitempty"`
+}
+
+type PollSummaryResponse struct {
+	Response
+	TotalVotes int   `json:"totalVotes"`
+	Poll       *Poll `json:"poll"`
 }
 
 type PollRequest struct {
@@ -43,5 +53,5 @@ func (p Poll) MarshalBinary() ([]byte, error) {
 type VoteOption struct {
 	Index    int    `json:"index" bson:"index"`
 	Title    string `json:"title" bson:"title"`
-	Quantity int    `json:"quantity" bson:"quantity"`
+	Quantity int    `json:"quantity,omitempty" bson:"quantity"`
 }

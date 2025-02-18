@@ -14,7 +14,8 @@
             "env": {
                 "REDIS_HOST":"localhost",
                 "REDIS_PORT":"6379",
-                "MONGO_URL":"mongodb://root:root@localhost:27017"
+                "MONGO_URL":"mongodb://root:root@localhost:27017",
+                "PORT": "8082"
             }
         },
         {

@@ -14,6 +14,7 @@ import (
 
 type PollService interface {
 	Poll(ctx context.Context) *models.PollResponse
+	PollSummary(ctx context.Context, pollID string) *models.PollSummaryResponse
 	NewPoll(ctx context.Context, pollReq models.PollRequest) *models.Response
 	Vote(ctx context.Context, voteRequest models.VoteRequest) *models.VoteResponse
 }
@@ -22,7 +23,7 @@ func NewPollService() PollService {
 	return &pollService{
 		captchaClient: captcha.NewCaptchaClient(),
 		pubSubClient:  pubsub.NewPubSubClient(),
-		repo:          repositories.NewVotesRepository(),
+		repo:          repositories.NewPollRepository(),
 	}
 }
 
@@ -40,6 +41,18 @@ func (v pollService) Poll(ctx context.Context) *models.PollResponse {
 	return &models.PollResponse{Poll: resp, Response: models.OKReponse}
 }
 
+func (v pollService) PollSummary(ctx context.Context, pollID string) *models.PollSummaryResponse {
+	resp, err := v.repo.GetPollSummary(ctx, pollID)
+	if err != nil {
+		return &models.PollSummaryResponse{Response: models.InternalServerErrorReponse}
+	}
+	totalVotes := 0
+	for _, vote := range resp.Options {
+		totalVotes += vote.Quantity
+	}
+	return &models.PollSummaryResponse{Poll: resp, Response: models.OKReponse, TotalVotes: totalVotes}
+}
+
 func (v pollService) NewPoll(ctx context.Context, pollReq models.PollRequest) *models.Response {
 	err := v.repo.AddPoll(ctx, &models.Poll{
 		Title:   pollReq.Title,
@@ -52,10 +65,6 @@ func (v pollService) NewPoll(ctx context.Context, pollReq models.PollRequest) *m
 }
 
 func (v pollService) Vote(ctx context.Context, voteRequest models.VoteRequest) *models.VoteResponse {
-	if len(voteRequest.CaptchaInput) == 0 {
-		return &models.VoteResponse{Response: models.Response{Code: "REQUIRED_CAPTCHA_INPUT", Message: "CAPTCHA answer is required", HttpStatusCode: http.StatusBadRequest}}
-	}
-
 	if v.captchaClient.ValidateCaptcha(voteRequest.CaptchaID, voteRequest.CaptchaInput) {
 		value, err := json.Marshal(voteRequest)
 		if err != nil {
@@ -81,5 +90,5 @@ func (v pollService) Vote(ctx context.Context, voteRequest models.VoteRequest) *
 		return &models.VoteResponse{Poll: *pool, Response: models.OKReponse}
 	}
 
-	return &models.VoteResponse{Response: models.Response{Code: "INVALID_CAPTCHA", Message: "Invalid CAPTCHA answer", HttpStatusCode: http.StatusBadRequest}}
+	return &models.VoteResponse{Response: models.InvalidCaptchaErrorReponse}
 }
